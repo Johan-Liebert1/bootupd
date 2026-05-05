@@ -43,7 +43,7 @@ const EFIBOOTMGR: &str = "efibootmgr";
 #[cfg(target_arch = "aarch64")]
 pub(crate) const SHIM: &str = "shimaa64.efi";
 
-#[cfg(target_arch = "x86_64")]
+#[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
 pub(crate) const SHIM: &str = "shimx64.efi";
 
 #[cfg(target_arch = "riscv64")]

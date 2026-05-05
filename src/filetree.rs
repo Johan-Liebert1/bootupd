@@ -6,36 +6,42 @@
 
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
 use crate::freezethaw::fsfreeze_thaw_cycle;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
 use anyhow::{bail, Context, Result};
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
 use camino::{Utf8Path, Utf8PathBuf};
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
 use openat_ext::OpenatDirExt;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
 use openssl::hash::{Hasher, MessageDigest};
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -46,6 +52,7 @@ use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt::Display;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -54,6 +61,7 @@ use std::os::unix::io::AsRawFd;
 /// The prefix we apply to our temporary files.
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -65,6 +73,7 @@ pub(crate) const TMP_PREFIX: &str = ".btmp.";
 // See also https://github.com/coreos/fedora-coreos-config/commit/8863c2b34095a2ae5eae6fbbd121768a5f592091
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -311,6 +320,7 @@ impl FileTree {
 // Recursively remove all files/dirs in the directory that start with our TMP_PREFIX
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -346,6 +356,7 @@ fn cleanup_tmp(dir: &openat::Dir) -> Result<()> {
 #[derive(Default, Clone)]
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -357,6 +368,7 @@ pub(crate) struct ApplyUpdateOptions {
 /// Copy from src to dst at root dir with default option '-a'
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -367,6 +379,7 @@ pub(crate) fn copy_dir(root: &openat::Dir, src: &str, dst: &str) -> Result<()> {
 /// Copy from src to dst at root dir with args
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -402,6 +415,7 @@ where
 /// "foo" -> ("foo", ".btmp.foo")
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -418,6 +432,7 @@ fn get_first_dir(path: &Utf8Path) -> Result<(Utf8PathBuf, String)> {
 /// Get dest efi path "shim/<ver>/EFI/fedora/shim.efi" -> "fedora/shim.efi"
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -432,6 +447,7 @@ fn get_dest_efi_path(path: &Utf8Path) -> Utf8PathBuf {
 /// Given two directories, apply a diff generated from srcdir to destdir
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]

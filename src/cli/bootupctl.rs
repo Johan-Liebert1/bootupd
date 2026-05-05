@@ -155,6 +155,7 @@ impl CtlCommand {
     fn run_migrate_static_grub_config() -> Result<()> {
         ensure_running_in_systemd()?;
         #[cfg(any(
+            target_arch = "x86",
             target_arch = "x86_64",
             target_arch = "aarch64",
             target_arch = "powerpc64",

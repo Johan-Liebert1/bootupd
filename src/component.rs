@@ -91,13 +91,14 @@ pub(crate) trait Component {
 pub(crate) fn new_from_name(name: &str) -> Result<Box<dyn Component>> {
     Ok(match name {
         #[cfg(any(
+            target_arch = "x86",
             target_arch = "x86_64",
             target_arch = "aarch64",
             target_arch = "riscv64"
         ))]
         #[allow(clippy::box_default)]
         "EFI" => Box::new(crate::efi::Efi::default()),
-        #[cfg(any(target_arch = "x86_64", target_arch = "powerpc64"))]
+        #[cfg(any(target_arch = "x86_64", target_arch = "x86", target_arch = "powerpc64"))]
         #[allow(clippy::box_default)]
         "BIOS" => Box::new(crate::bios::Bios::default()),
         _ => anyhow::bail!("No component {}", name),
@@ -108,6 +109,7 @@ pub(crate) fn new_from_name(name: &str) -> Result<Box<dyn Component>> {
 /// a component.
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -120,6 +122,7 @@ pub(crate) fn component_updatedirname(component: &dyn Component) -> PathBuf {
 #[allow(dead_code)]
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]

@@ -43,7 +43,7 @@ impl Bios {
     // Return `true` if grub2-modules installed
     fn check_grub_modules(&self) -> Result<bool> {
         let usr_path = Path::new("/usr/lib/grub");
-        #[cfg(target_arch = "x86_64")]
+        #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
         {
             usr_path.join("i386-pc").try_exists().map_err(Into::into)
         }
@@ -71,7 +71,7 @@ impl Bios {
         // We forcibly inject mdraid1x because it's needed by CoreOS's default of "install raw disk image"
         // We also add part_gpt because in some cases probing of the partition map can fail such
         // as in a container, but we always use GPT.
-        #[cfg(target_arch = "x86_64")]
+        #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
         cmd.args(["--target", "i386-pc"])
             .args(["--boot-directory", boot_dir.to_str().unwrap()])
             .args(["--modules", "mdraid1x part_gpt"])
@@ -139,7 +139,7 @@ impl Component for Bios {
     }
 
     fn query_adopt(&self, devices: &Option<Vec<Device>>) -> Result<Option<Adoptable>> {
-        #[cfg(target_arch = "x86_64")]
+        #[cfg(any(target_arch = "x86_64", target_arch = "x86"))]
         if crate::efi::is_efi_booted()? && devices.is_none() {
             log::debug!("Skip BIOS adopt");
             return Ok(None);

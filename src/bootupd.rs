@@ -1,10 +1,11 @@
-#[cfg(any(target_arch = "x86_64", target_arch = "powerpc64"))]
+#[cfg(any(target_arch = "x86_64", target_arch = "x86", target_arch = "powerpc64"))]
 use crate::bios;
 use crate::component;
 use crate::component::{Component, ValidationResult};
 use crate::coreos;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -12,6 +13,7 @@ use crate::efi;
 use crate::freezethaw::fsfreeze_thaw_cycle;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "powerpc64",
     target_arch = "riscv64"
@@ -178,6 +180,7 @@ pub(crate) fn install(
     let sysroot = &openat::Dir::open(dest_root)?;
 
     #[cfg(any(
+        target_arch = "x86",
         target_arch = "x86_64",
         target_arch = "aarch64",
         target_arch = "powerpc64",
@@ -237,7 +240,7 @@ pub(crate) fn get_components_impl(_auto: bool) -> Components {
         components.insert(component.name(), component);
     }
 
-    #[cfg(target_arch = "x86_64")]
+    #[cfg(any(target_arch = "x86", target_arch = "x86_64"))]
     {
         if _auto {
             let is_efi_booted = crate::efi::is_efi_booted().unwrap();
@@ -330,6 +333,7 @@ pub(crate) fn update(name: &str, rootcxt: &RootContext) -> Result<ComponentUpdat
     // Verify the permissions of grub files are 0600
     #[cfg(any(
         target_arch = "x86_64",
+        target_arch = "x86",
         target_arch = "aarch64",
         target_arch = "powerpc64",
         target_arch = "riscv64"
@@ -382,6 +386,7 @@ pub(crate) fn adopt_and_update(
     // Verify the permissions of grub files are 0600
     #[cfg(any(
         target_arch = "x86_64",
+        target_arch = "x86",
         target_arch = "aarch64",
         target_arch = "powerpc64",
         target_arch = "riscv64"
@@ -577,6 +582,7 @@ pub(crate) fn print_status(status: &Status) -> Result<()> {
 
     #[cfg(any(
         target_arch = "x86_64",
+        target_arch = "x86",
         target_arch = "aarch64",
         target_arch = "riscv64"
     ))]

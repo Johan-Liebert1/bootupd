@@ -17,7 +17,7 @@ Refs:
 #![deny(clippy::dbg_macro)]
 
 mod backend;
-#[cfg(any(target_arch = "x86_64", target_arch = "powerpc64"))]
+#[cfg(any(target_arch = "x86_64", target_arch = "x86", target_arch = "powerpc64"))]
 mod bios;
 mod bootupd;
 mod cli;
@@ -25,6 +25,7 @@ mod component;
 mod coreos;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "riscv64"
 ))]
@@ -35,6 +36,7 @@ mod filetree;
 mod freezethaw;
 #[cfg(any(
     target_arch = "x86_64",
+    target_arch = "x86",
     target_arch = "aarch64",
     target_arch = "powerpc64",
     target_arch = "riscv64"

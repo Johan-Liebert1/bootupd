@@ -42,9 +42,15 @@ pub(crate) fn fsfreeze_thaw_cycle<Fd: AsFd>(fd: Fd) -> anyhow::Result<()> {
     let freeze = ioctl_fifreeze(&fd);
     match freeze {
         // Ignore permissions errors (tests)
-        Err(Errno::PERM) => Ok(()),
+        Err(Errno::PERM) => {
+            println!("EPERM while syncing fs");
+            Ok(())
+        }
         // Ignore unsupported FS
-        Err(Errno::NOTSUP) => Ok(()),
+        Err(Errno::NOTSUP) => {
+            println!("ENOTSUP while syncing fs");
+            Ok(())
+        }
         Ok(()) => Ok(ioctl_fithaw(fd)?),
         _ => Ok(freeze?),
     }

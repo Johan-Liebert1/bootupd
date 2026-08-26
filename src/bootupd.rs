@@ -265,6 +265,8 @@ pub(crate) fn install(opts: &InstallOpts, devices: &[Device], configs: ConfigMod
     }
     let sysroot = &Dir::open_ambient_dir(&opts.dest_root, ambient_authority())?;
 
+    println!("Bootloader: {bootloader}");
+
     #[cfg(any(
         target_arch = "x86_64",
         target_arch = "aarch64",
@@ -283,6 +285,9 @@ pub(crate) fn install(opts: &InstallOpts, devices: &[Device], configs: ConfigMod
                 {
                     for c in &target_components {
                         use crate::efi::Efi;
+
+                        println!("Inside target_components loop. Component: {}", c.name());
+                        println!("Downcased: {:?}", c.as_any().downcast_ref::<Efi>());
 
                         if let Some(efi) = c.as_any().downcast_ref::<Efi>() {
                             let mounted_esp_path = efi.get_esp_mountpoint();

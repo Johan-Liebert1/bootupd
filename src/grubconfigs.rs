@@ -3,7 +3,7 @@ use std::io::Read;
 use std::os::unix::io::AsRawFd;
 use std::path::{Path, PathBuf};
 
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use bootc_internal_utils::CommandRunExt;
 use cap_std::ambient_authority;
 use cap_std::fs::{Dir, DirBuilder, DirBuilderExt, MetadataExt, Permissions, PermissionsExt};
@@ -36,6 +36,9 @@ pub(crate) fn install(
     write_uuid: bool,
     mounted_esp: Option<&Dir>,
 ) -> Result<()> {
+    println!("Installing static GRUB configs");
+    println!("write_uuid: {write_uuid}");
+
     let bootdir = &target_root.open_dir("boot").context("Opening /boot")?;
     let boot_is_mount = {
         let root_dev = target_root.metadata(".")?.dev();
@@ -135,12 +138,19 @@ pub(crate) fn install(
         let vendor = PathBuf::from("EFI").join(vendordir);
         let target = &vendor.join("grub.cfg");
 
+        log::debug!("mounted_esp: {mounted_esp:?}");
+
         if let Some(efidir) = mounted_esp {
             configdir
                 .copy("grub-static-efi.cfg", &efidir, target)
                 .context("Copying static EFI")?;
 
             println!("Installed: {target:?}");
+            println!("uuid_path: {uuid_path:?}");
+            println!(
+                "efidir: {:?}",
+                rustix::fs::readlink(format!("/proc/self/fd/{}", efidir.as_raw_fd()), &[])
+            );
 
             if let Some(uuid_path) = uuid_path {
                 let target = &vendor.join(uuid_path);

@@ -1,7 +1,7 @@
 use crate::aleph;
 #[cfg(any(target_arch = "x86_64", target_arch = "powerpc64"))]
 use crate::bios;
-use crate::bootloader::{get_bootloader, Bootloader};
+use crate::bootloader::{Bootloader, get_bootloader};
 use crate::cli::bootupd::InstallOpts;
 use crate::component::{self, ComponentType};
 use crate::component::{Component, ValidationResult};
@@ -18,10 +18,10 @@ use crate::freezethaw::fsfreeze_thaw_cycle;
     target_arch = "powerpc64",
     target_arch = "riscv64"
 ))]
-use crate::grubconfigs::{ensure_grub_permissions, GRUB2DIR};
+use crate::grubconfigs::{GRUB2DIR, ensure_grub_permissions};
 use crate::model::{ComponentStatus, ComponentUpdatable, ContentMetadata, SavedState, Status};
 use crate::{ostreeutil, util};
-use anyhow::{anyhow, Context, Result};
+use anyhow::{Context, Result, anyhow};
 use camino::{Utf8Path, Utf8PathBuf};
 use cap_std_ext::dirext::CapStdExtDirExt;
 use clap::crate_version;
@@ -265,7 +265,21 @@ pub(crate) fn install(opts: &InstallOpts, devices: &[Device], configs: ConfigMod
     }
     let sysroot = &Dir::open_ambient_dir(&opts.dest_root, ambient_authority())?;
 
+    println!("target_arch: {}", std::env::consts::ARCH);
     println!("Bootloader: {bootloader}");
+    println!(
+        "target_components: {:?}",
+        target_components
+            .iter()
+            .map(|tc| tc.name())
+            .collect::<Vec<_>>()
+    );
+
+    if cfg!(efi_arch) {
+        println!("cfg!(efi_arch) is true");
+    } else {
+        println!("cfg!(efi_arch) is false");
+    }
 
     #[cfg(any(
         target_arch = "x86_64",
@@ -274,15 +288,29 @@ pub(crate) fn install(opts: &InstallOpts, devices: &[Device], configs: ConfigMod
         target_arch = "riscv64"
     ))]
     if bootloader == Bootloader::Grub {
+        println!(
+            "configs.enabled_with_uuid(): {:?}",
+            configs.enabled_with_uuid()
+        );
         match configs.enabled_with_uuid() {
             Some(uuid) => {
                 let meta = get_static_config_meta()?;
                 state.static_configs = Some(meta);
 
+                println!("state: {state:?}");
+
                 let mut esp_dir = None;
 
                 #[cfg(efi_arch)]
                 {
+                    println!(
+                        "Entered #[cfg(efi_arch)] block, target_components: {:?}",
+                        target_components
+                            .iter()
+                            .map(|tc| tc.name())
+                            .collect::<Vec<_>>()
+                    );
+
                     for c in &target_components {
                         use crate::efi::Efi;
 
